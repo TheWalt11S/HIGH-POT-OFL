@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>HIGH POT OFL</title>
+
+    <!-- Recuperar el tema guardado -->
+
+    <script>
+        try {
+            document.documentElement.dataset.theme =
+                localStorage.getItem("codestudio-theme") === "dark"
+                    ? "dark"
+                    : "light";
+        } catch {}
+    </script>
+
+    <!-- Estilos CSS -->
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Librería para generar códigos QR -->
+
+    <script defer
+        src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js">
+    </script>
+
+    <!-- Librería para generar códigos de barras -->
+
+    <script defer
+        src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js">
+    </script>
+
+    <!-- Librería para importar Excel y CSV -->
+
+    <script defer
+        src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+    </script>
+
+    <!-- Librería para generar archivos ZIP -->
+
+    <script defer
+        src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js">
+    </script>
+
+    <!-- JavaScript principal -->
+
+    <script defer src="js/app.js"></script>
+
+</head>
+
+<body>
+
+    <!-- ====================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ====================================== -->
+
+    <header>
+
+        <strong>▦ HIGH POT OFL</strong>
+
+        <span>Generador de códigos</span>
+
+        <!-- Botón de modo oscuro y claro -->
+
+        <button id="themeToggle"
+                type="button"
+                aria-label="Activar modo oscuro"
+                aria-pressed="false">
+
+            <span id="themeIcon" aria-hidden="true">
+                ☾
+            </span>
+
+            <span id="themeText">
+                Modo oscuro
+            </span>
+
+        </button>
+
+    </header>
+
+    <!-- ====================================== -->
+    <!-- CONTENIDO PRINCIPAL -->
+    <!-- ====================================== -->
+
+    <main>
+
+        <h1>Crea tus códigos</h1>
+
+        <p>
+            Personaliza, descarga y comparte códigos
+            listos para escanear.
+        </p>
+
+        <!-- Selector de generador -->
+
+        <nav>
+
+            <button id="qrTab" class="active">
+                Código QR
+            </button>
+
+            <button id="barTab">
+                Código de barras
+            </button>
+
+        </nav>
+
+        <div class="layout">
+
+            <!-- ================================== -->
+            <!-- PANEL DE CONFIGURACIÓN -->
+            <!-- ================================== -->
+
+            <section>
+
+                <h2>Configuración</h2>
+
+                <!-- Tipo de código -->
+
+                <label>
+
+                    Tipo de código
+
+                    <select id="type"></select>
+
+                </label>
+
+                <!-- Campos dinámicos desde JavaScript -->
+
+                <div id="fields"></div>
+
+                <!-- Personalización de colores -->
+
+                <div class="pair">
+
+                    <label>
+
+                        Color del código
+
+                        <input id="fg"
+                               type="color"
+                               value="#111827">
+
+                    </label>
+
+                    <label>
+
+                        Fondo
+
+                        <input id="bg"
+                               type="color"
+                               value="#ffffff">
+
+                    </label>
+
+                </div>
+
+                <!-- Tamaño del código -->
+
+                <label>
+
+                    Tamaño / ancho (px)
+
+                    <input id="size"
+                           type="number"
+                           min="128"
+                           max="2048"
+                           value="512">
+
+                </label>
+
+                <!-- Cargar logotipo -->
+
+                <label id="logoLabel">
+
+                    Logotipo opcional
+
+                    <input id="logo"
+                           type="file"
+                           accept="image/png,image/jpeg,image/webp">
+
+                </label>
+
+                <!-- Botón para generar código -->
+
+                <button class="primary" id="generate">
+
+                    Generar código
+
+                </button>
+
+                <!-- Mensajes de estado -->
+
+                <p id="status"
+                   role="status"
+                   aria-live="polite">
+                </p>
+
+            </section>
+
+            <!-- ================================== -->
+            <!-- PANEL DE VISTA PREVIA -->
+            <!-- ================================== -->
+
+            <section>
+
+                <h2>Vista previa</h2>
+
+                <!-- Contenedor del código generado -->
+
+                <div id="preview"></div>
+
+                <!-- Botones de descarga e impresión -->
+
+                <div class="actions">
+
+                    <button id="png">
+                        PNG
+                    </button>
+
+                    <button id="svg">
+                        SVG
+                    </button>
+
+                    <button id="print">
+                        Imprimir
+                    </button>
+
+                    <button id="expandBarcode" hidden>
+                        ⛶ Ampliar código
+
+                </div>
+
+                <small>
+
+                    Comprueba el código con un lector
+                    antes de imprimir grandes cantidades.
+
+                </small>
+
+            </section>
+
+        </div>
+
+        <!-- ====================================== -->
+        <!-- GENERACIÓN MASIVA -->
+        <!-- ====================================== -->
+
+        <section>
+
+            <h2>Generación masiva</h2>
+
+            <p>
+
+                Importa Excel o CSV con una columna
+                llamada <b>contenido</b>.
+
+                Se utilizará el tipo y los colores
+                seleccionados arriba.
+
+                Descarga los códigos PNG en un ZIP.
+
+            </p>
+
+            <!-- Importar archivo -->
+
+            <input id="batch"
+                   type="file"
+                   accept=".xlsx,.xls,.csv">
+
+            <!-- Generar archivo ZIP -->
+
+            <button id="batchGo">
+
+                Generar ZIP
+
+            </button>
+
+            <!-- Estado de generación masiva -->
+
+            <p id="batchStatus" role="status"></p>
+
+        </section>
+
+        <!-- ====================================== -->
+        <!-- HISTORIAL DE CÓDIGOS -->
+        <!-- ====================================== -->
+
+        <section>
+
+            <div class="between">
+
+                <h2>Historial local</h2>
+
+                <button id="clear">
+
+                    Borrar historial
+
+                </button>
+
+            </div>
+
+            <!-- Registros generados desde JavaScript -->
+
+            <div id="history"></div>
+
+        </section>
+
+    </main>
+
+    <!-- ====================================== -->
+    <!-- PIE DE PÁGINA -->
+    <!-- ====================================== -->
+
+    <footer>
+
+        HIGH POT OFL · Sin Terjeta de prodccion
+
+    </footer>
+
+
+<!-- Ventana de código ampliado -->
+
+<div id="barcodeModal"
+     class="barcode-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitle"
+     hidden>
+
+    <div class="barcode-modal-content">
+
+        <div class="barcode-modal-header">
+
+            <h2 id="modalTitle">Código de barras</h2>
+
+            <button id="closeBarcode"
+                    aria-label="Cerrar ventana">
+                ✕
+            </button>
+
+        </div>
+
+        <div id="expandedPreview"></div>
+
+        <p>Vista ampliada del código de barras</p>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

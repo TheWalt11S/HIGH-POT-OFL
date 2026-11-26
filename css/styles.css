@@ -1,0 +1,191 @@
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#182238;font:15px/1.5 system-ui,sans-serif}header{background:white;border-bottom:1px solid #e1e6ef;padding:18px max(5vw,20px);display:flex;align-items:center;gap:24px}header strong{font-size:23px;color:#4f46e5}header span,small,p{color:#64748b}main{max-width:1080px;margin:40px auto;padding:0 20px}h1{font-size:34px;letter-spacing:-1px;margin:0}h2{font-size:19px;margin:0 0 18px}nav,.actions,.between{display:flex;gap:10px;align-items:center;flex-wrap:wrap}nav{margin:24px 0}.layout{display:grid;grid-template-columns:1fr 1fr;gap:20px}section{background:white;border:1px solid #e1e6ef;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 16px #17255408}label{display:block;font-weight:600;margin:14px 0}input,select,textarea{display:block;width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:11px;margin-top:6px;font:inherit;background:white;color:inherit}input[type=color]{height:44px;padding:4px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}button{font:inherit;font-weight:600;border:1px solid #dbe2ec;border-radius:9px;background:white;color:#334155;padding:10px 17px;cursor:pointer}button:hover{background:#eef2ff}button:disabled{opacity:.5;cursor:not-allowed}.primary,.active{background:#4f46e5;color:white;border-color:#4f46e5}.primary:hover,.active:hover{background:#4338ca}.primary{width:100%}#preview{min-height:290px;display:flex;align-items:center;justify-content:center;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:18px;margin-bottom:16px;overflow:hidden}#preview canvas,#preview svg,#preview img{max-width:100%;height:auto;object-fit:contain}.between{justify-content:space-between}.entry{display:flex;justify-content:space-between;gap:12px;align-items:center;border-top:1px solid #e2e8f0;padding:12px 0}.entry span{overflow-wrap:anywhere;min-width:0}footer{text-align:center;color:#64748b;padding:20px}#status,#batchStatus{overflow-wrap:anywhere}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #818cf8;outline-offset:2px}@media(max-width:720px){.layout{grid-template-columns:1fr}main{margin:24px auto}header span{display:none}section{padding:18px}}
+
+/* Selector de apariencia */
+#themeToggle{margin-left:auto;display:flex;align-items:center;gap:8px;white-space:nowrap}#themeToggle span{display:inline;color:inherit}#themeIcon{font-size:21px;line-height:1}body,header,section,input,select,textarea,button,#preview{transition:background-color .2s,color .2s,border-color .2s}
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{background:#0f172a;color:#e2e8f0}
+html[data-theme="dark"] header,html[data-theme="dark"] section{background:#1e293b;border-color:#334155;box-shadow:none}
+html[data-theme="dark"] header strong{color:#a5b4fc}
+html[data-theme="dark"] header span,html[data-theme="dark"] small,html[data-theme="dark"] p,html[data-theme="dark"] footer{color:#a8b6ca}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#0f172a;border-color:#475569;color:#f1f5f9}
+html[data-theme="dark"] button{background:#273449;border-color:#475569;color:#e2e8f0}
+html[data-theme="dark"] button:hover{background:#374760}
+html[data-theme="dark"] .primary,html[data-theme="dark"] .active{background:#4f46e5;border-color:#6366f1;color:white}
+html[data-theme="dark"] .primary:hover,html[data-theme="dark"] .active:hover{background:#4338ca}
+html[data-theme="dark"] #preview{background:#111c30;border-color:#475569}
+html[data-theme="dark"] .entry{border-color:#334155}
+@media(max-width:480px){#themeToggle #themeText{display:none}header{gap:8px}#themeToggle{padding:10px 14px}}
+@media(prefers-reduced-motion:reduce){body,header,section,input,select,textarea,button,#preview{transition:none}}
+
+/* ==========================================
+   BOTÓN DE AMPLIAR CÓDIGO
+   ========================================== */
+
+#expandBarcode {
+    width: 100%;
+    margin-top: 10px;
+    background: #4f46e5;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#expandBarcode:hover {
+    background: #4338ca;
+}
+
+#expandBarcode[hidden],
+.barcode-modal[hidden] {
+    display: none !important;
+}
+
+/* ==========================================
+   VENTANA MODAL
+   ========================================== */
+
+.barcode-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+}
+
+.barcode-modal-content {
+    width: 95%;
+    max-width: 1000px;
+    max-height: 90vh;
+    overflow: auto;
+
+    padding: 25px;
+    background: #ffffff;
+    color: #111827;
+
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+    animation: modalOpen 0.25s ease;
+}
+
+.barcode-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.barcode-modal-header h2 {
+    margin: 0;
+}
+
+#closeBarcode {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #111827;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#closeBarcode:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+/* ==========================================
+   CÓDIGO DE BARRAS AMPLIADO
+   ========================================== */
+
+#expandedPreview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    overflow: auto;
+}
+
+#expandedPreview svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none;
+}
+
+.barcode-modal-content p {
+    text-align: center;
+    margin-top: 20px;
+    color: #64748b;
+}
+
+/* ==========================================
+   MODO OSCURO
+   ========================================== */
+
+[data-theme="dark"] .barcode-modal-content {
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] #closeBarcode {
+    background: #334155;
+    color: #ffffff;
+}
+
+[data-theme="dark"] #closeBarcode:hover {
+    background: #ef4444;
+}
+
+[data-theme="dark"] .barcode-modal-content p {
+    color: #94a3b8;
+}
+
+/* ==========================================
+   ANIMACIÓN
+   ========================================== */
+
+@keyframes modalOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.90);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ==========================================
+   ADAPTACIÓN A CELULARES
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .barcode-modal-content {
+        width: 100%;
+        padding: 15px;
+    }
+
+    #expandedPreview {
+        padding: 10px;
+    }
+
+    .barcode-modal-header h2 {
+        font-size: 18px;
+    }
+}
